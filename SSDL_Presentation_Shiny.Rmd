@@ -1,35 +1,54 @@
 ---
 title: "MZES SSDL - Shiny Apps: Development and Deployment"
 author: "Konstantin Gavras"
+institute: "MZES, University of Mannheim"
 date: "15 October 2019"
-output: beamer_presentation
+output: 
+  beamer_presentation:
+    incremental: no
+    fig_caption: false
+header-includes:
+     - \usepackage{longtable}
+     - \usepackage{xcolor}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+img1_path <- "shiny.png"
+
+library(knitr) 
 ```
 
 # Shiny
 
 ## Shiny from RStudio
-
-
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
+```{r, out.width = "50%", fig.align="center"}
+include_graphics(img1_path)
 ```
 
-## Slide with Plot
+- Shiny is a package by RStudio to build interactive web pages...
+    - without having any knowledge of web development (HTML/CSS/JavaScript)
 
-```{r pressure}
-plot(pressure)
-```
+- Shiny Apps interact with R 
+    - Allows for calculations, display of R objects, presentation of results ... 
 
+## Shiny App Components
+
+1. Front end
+
+- the web page actually shown to the user
+- the HTML page written by Shiny
+- includes layout, appearance, design features
+
+
+- in Shiny terminology: `ui` (user interface)
+
+2. Back end
+
+- code running the app, including all functions, data import, etc.
+- involves the logic of the app
+- responsible for creating objects on the front end
+
+- in Shiny terminology: `server`
+
+## Setting up a Shiny App
