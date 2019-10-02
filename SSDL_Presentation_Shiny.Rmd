@@ -52,3 +52,90 @@ include_graphics(img1_path)
 - in Shiny terminology: `server`
 
 ## Setting up a Shiny App
+
+Shiny Apps can be set up in two different ways:
+
+1. Single file App
+
+- `ui` and `server` are stored in one script
+
+- used when developing very simple Shiny Apps
+
+- name of the file has to be `app.R`!!!
+
+2. Two file App
+
+- `ui` and `server` are stored in separate scripts
+
+- clear separation between front end and back end
+
+- highly preferable when developing more advanced Shiny Apps
+
+- names of the files have to be `ui.R` and `server.R`!!!
+
+$\rightarrow$ We are going to develop Shiny Apps using the Two File method
+
+# Developing Shiny Apps - Step by Step
+
+## Let's get started!
+
+Workshop materials: [https://github.com/KostaGav/shiny-development-deployment](https://github.com/KostaGav/shiny-development-deployment)
+
+**Features covered in the workshop:**
+
+Development:
+
+1. Building a Shiny App from scratch
+
+2. Building the plain UI
+
+3. Getting output objects and control widgets into the UI
+
+4. Implementing the server logic
+
+5. Output/Input Reaction
+
+6. Rendering objects
+
+7. Reactivity
+
+Deployment:
+
+1. Deploy your app using `shinyapps.io`
+
+2. Deploy on your own VM using `Shiny Server`
+
+
+## Building a Shiny App from scratch
+
+```{r, eval=FALSE, echo = TRUE}
+install.packages("shiny")
+library(shiny)
+runExample("01_hello")
+#To show alternative Apps, please type runExample(NA) 
+#and choose another example
+```
+
+## Building a Shiny App from scratch
+
+- Create a new folder with two R scripts:
+
+`ui.R`:
+
+```{r, eval=FALSE, echo=TRUE}
+library(shiny)
+ui <- fluidPage()
+```
+
+`server.R`:
+
+```{r, eval=FALSE, echo=TRUE}
+server <- function(input, output){}
+```
+
+- Launch the Shiny App by pressing the 'Run App' button in the top right corner
+
+
+## Building the plain UI
+
+XXX
