@@ -10,11 +10,15 @@ output:
 header-includes:
      - \usepackage{longtable}
      - \usepackage{xcolor}
+     - \newcommand{\bsmall}{\begin{small}}
+     - \newcommand{\esmall}{\end{small}}
+fontsize: 10pt
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 img1_path <- "shiny.png"
+img2_path <- "shiny-inputs.png"
 
 library(knitr) 
 ```
@@ -85,7 +89,7 @@ Workshop materials: [https://github.com/KostaGav/shiny-development-deployment](h
 
 Development:
 
-1. Building a Shiny App from scratch
+1. Building a Shiny App from scratch 
 
 2. Building the plain UI
 
@@ -138,4 +142,68 @@ server <- function(input, output){}
 
 ## Building the plain UI
 
-XXX
+- When building a Shiny App, one should have, in general, in mind how the app should 'look' like
+
+- Thus, we build the UI first
+
+- In simple Shiny App, the whole UI fits in the `fluidpage`
+
+    - every new object is passed comma-separated 
+    - text can be passsed to the UI by entering strings 
+
+- In order to format text, Shiny uses HTML wrappers:
+
+    - these wrappers are functions taking one object as argument (+ further style options)
+    - `h1()`: Top-level header
+    - `h2()`: secondary header
+    - `strong()`: make text bold
+    - `em()`: make text italicized
+    - `br()`: add line break
+    
+
+    
+- We can add an official header using `titlePanel()`
+
+Q: Can you see any particular differences between using `h1()` and the `titlePanel()` when using them as title?
+
+
+## Building the plain UI
+
+- Until now, we only have a plain white page
+
+- We need a proper layout to make it appear nicer:
+
+    - `sidebarlayout` is the simplest layout format
+    - Input and control widgets on the left side, results and plots on the right hand side
+    
+```{r, eval = F, echo=T}
+ui <- fluidPage(
+  titlePanel("Title of my Shiny App"),
+  sidebarLayout(
+    sidebarPanel("My input goes here"),
+    mainPanel("The results go here")
+  )
+)
+```
+
+## Adding Input and Control Widgets
+
+- In order to interact with Shiny Apps, we need control widgets
+
+- User can specify inputs, enter text or select specific dates to create a certain results
+
+- all input function have two arguments: `inputId` and `label`
+
+    - `inputId`: name Shiny uses to refer to this input, when retrieving values for the back end
+    - has to be unique! (WARNING: if you provide two Ids with the same name, there won't be an error message!)
+    - `label`: Text displaying the label of the control widget
+    
+## Adding Input and Control Widgets
+
+```{r, out.width = "100%", fig.align="center"}
+include_graphics(img2_path)
+```
+
+## Adding Input and Control Widgets
+
+
