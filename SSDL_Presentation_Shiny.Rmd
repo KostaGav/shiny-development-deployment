@@ -206,4 +206,55 @@ include_graphics(img2_path)
 
 ## Adding Input and Control Widgets
 
+- control widgets go in the `sidebarPanel`
 
+- always choose control widgets depending on the design of your app!
+
+- Most common:
+
+    - `radioButtons()`
+    - `selectInput()`
+    - `sliderInput()`
+
+
+## Adding Input and Control Widgets - Radio Buttons
+
+- We specify the possible values, range and appearance in the control widget 
+
+```{r, eval = F, echo=T}
+radioButtons(
+  "buttons",
+  "Push a button",
+  choices = c("One", "Two", "Three"),
+  selected = "One"
+)
+```
+
+
+## Adding Input and Control Widgets - Select Input
+
+- We specify the possible values, range and appearance in the control widget 
+
+```{r, eval = F, echo=T}
+selectInput(
+  "selector",
+  "Select a color",
+  choices = c("Blue", "Green", "Yellow")
+)
+```
+
+
+## Adding Input and Control Widgets - Slider Input
+
+- We specify the possible values, range and appearance in the control widget 
+
+```{r, eval = F, echo=T}
+sliderInput(
+  "slider",
+  "Pick a range",
+  min = 0,
+  max = 100,
+  value = c(10,30),
+  pre = "€"
+)
+```
