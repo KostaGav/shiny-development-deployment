@@ -1,29 +1,33 @@
 library(shiny)
+library(ggplot2)
+library(plotly)
 #The most simple structure of the UI:
 ui <- fluidPage(
-  titlePanel("This is an actual Title"),
+  titlePanel("Visualizing the mtcars data set"),
   sidebarLayout(
     sidebarPanel(
       radioButtons(
         "buttons",
-        "Push a button",
-        choices = c("One", "Two", "Three"),
-        selected = "One"
+        "Choose a mode of transmission",
+        choices = c("automatic" = 0, "manual" = 1),
+        selected = 0
       ),
       selectInput(
         "selector",
-        "Select a color",
-        choices = c("Blue", "Green", "Yellow")
+        "Select the number of cylinders",
+        choices = c(4, 6, 8)
       ),
       sliderInput(
         "slider",
-        "Pick a range",
+        "Pick a range of gross horsepower",
         min = 0,
-        max = 100,
-        value = c(10,30),
-        pre = "€"
+        max = 400,
+        value = c(10,300),
+        pre = "hp"
       )
     ),
-    mainPanel()
+    mainPanel(
+      plotlyOutput("greatPlot")
+    )
   )
 )

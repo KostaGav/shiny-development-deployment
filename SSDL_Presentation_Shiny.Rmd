@@ -227,9 +227,9 @@ include_graphics(img2_path)
 ```{r, eval = F, echo=T}
 radioButtons(
   "buttons",
-  "Push a button",
-  choices = c("One", "Two", "Three"),
-  selected = "One"
+  "Choose a mode of transmission",
+  choices = c("automatic" = 0, "manual" = 1),
+  selected = 0
 )
 ```
 
@@ -241,8 +241,8 @@ radioButtons(
 ```{r, eval = F, echo=T}
 selectInput(
   "selector",
-  "Select a color",
-  choices = c("Blue", "Green", "Yellow")
+  "Select the number of cylinders",
+  choices = c(4, 6, 8)
 )
 ```
 
@@ -254,11 +254,11 @@ selectInput(
 ```{r, eval = F, echo=T}
 sliderInput(
   "slider",
-  "Pick a range",
+  "Pick a range of gross horsepower",
   min = 0,
-  max = 100,
-  value = c(10,30),
-  pre = "€"
+  max = 400,
+  value = c(10,300),
+  pre = "hp"
 )
 ```
 
@@ -275,17 +275,13 @@ sliderInput(
 
 - Plot output:
 
-```{r}
+```{r, eval = F, echo=T}
 plotOutput("greatPlot")
 ```
 
-- Table output:
+- other output forms: `tableOutput()`, `textOutput()`, etc.
 
-```{r}
-tableOutput("superbTable")
-```
-
-- output element should always be added to the `mainPanel()`
+- output elements should always be added to the `mainPanel()`
 
 
 ## Exercise I - Building your own UI
@@ -302,7 +298,7 @@ glimpse(mtcars)
 
 2. We want to create a classic data presentation app. Think of an appropriate UI for the data presentation. If you like, you can draw a sketch.
 
-3. Think of useful control widgets to control the presentation of the data.
+3. Think of useful control widgets to control data presentation.
 
 4. Create the two files needed for Shiny Apps, add the relevant code to initiate the app and set up an UI with a sidebar.
 
@@ -317,4 +313,260 @@ glimpse(mtcars)
 
 ## Implementing the server logic
 
-XXX
+We now switch from front end to back end!
+
+- Server logic in Shiny Apps builds upon an `input` and an `output` argument
+
+    - `input`: Contains the values of given input by the users
+
+    - `output`: Plots and tables created, based on the values from the input
+    
+- Output objects can be created without any input specification, but always need to be connected with the UI by the `outputId`
+
+- Standard procedure:
+
+    1. Save the output object into the `output` list
+    
+    2. Build the object using a `render` function. For every object type, there is a unique `render` function, e.g. `renderPlot()`
+    
+    3. (Access input values using the `input` list)
+    
+
+## Implementing the server logic
+
+- We have to make sure, that two conditions match: Ids and output/render functions
+
+```{r, eval = F, echo=T}
+output$greatPlot <- renderPlot({
+  plot(rnorm(1000))
+})
+
+```
+
+- Since we named our plotOutput in the UI `greatPlot`, we have to assign it to this Id
+
+- Also, we are using the `plotOutput` function in the UI. Thus, we need the `renderPlot` function to match it
+
+## Output/Input Reaction
+
+- Presenting static plots is kinda boring. We want users to fiddle around with the data to gain insights from the data
+
+- Our plots need a connection to the input and the control widgets
+
+```{r, eval = F, echo=T}
+output$greatPlot <- renderPlot({
+  plot(rnorm(input$slider[1]))
+})
+```
+
+- The logic behind the `input` list is the same as for the `output` list
+
+    - based to the Ids provided in the UI, we access the respective object (control widget)
+    
+    - given the structure of the input, we specify it to fit the output object
+
+## Rendering Plots
+
+- We can add further code to the `renderPlot` function in order to increase interactivity of plots
+
+```{r, eval = F, echo=T}
+library(ggplot2)
+
+output$greatPlot <- renderPlot({
+  ggplot(mtcars, aes(mpg)) + 
+    geom_histogram()
+})
+
+```
+
+
+## Rendering Plots
+
+- A very simple way of increasing interactivity is filtering
+
+```{r, eval = F, echo=T}
+library(ggplot2)
+
+output$greatPlot <- renderPlot({
+  
+  filteredData <- 
+    mtcars %>% 
+    filter(hp >= input$slider[1],
+           hp <= input$slider[2],
+           cyl == input$selector,
+           am == input$buttons)
+  
+  ggplot(filteredData, aes(mpg)) + 
+    geom_histogram()
+})
+
+```
+
+- Now the plot is interactive, but the whole code will get re-executed every time the user re-specifies anything $\rightarrow$ Can become very memory intensive and repetitive when building several plots!
+
+## Rendering Plots - Make it more Interactive!
+
+- One way of increasing the user experience with your app are [`plotly`](https://plot.ly/) plots
+
+- Using `ggplot` it is extremely easy to implement them:
+
+```{r, eval = F, echo=T}
+library(plotly)
+# ui.R
+## Replace plotOutput() with plotlyOutput(), since we refer to a different type of object
+
+# server.R
+  output$greatPlot <- renderPlotly({
+    
+    filteredData <- 
+      mtcars %>% 
+      filter(hp >= input$slider[1],
+             hp <= input$slider[2],
+             cyl == input$selector,
+             am == input$buttons)
+    
+    plotHist <- ggplot(filteredData, aes(mpg)) + 
+      geom_histogram()
+    
+    ggplotly(plotHist)
+  })
+```
+
+
+## Reactivity
+
+- We can use reactive variables to extract the filtering from the rendering functions
+
+```{r, eval = F, echo=T}
+library(ggplot2)
+
+  filtered <- reactive({
+    mtcars %>% 
+      filter(hp >= input$slider[1],
+             hp <= input$slider[2],
+             cyl == input$selector,
+             am == input$buttons)
+  })
+
+output$greatPlot <- renderPlotly({
+  plotHist <- ggplot(filtered(), aes(mpg)) + 
+    geom_histogram()
+  ggplotly(plotHist)
+})
+
+```
+
+- Reactive objects can now be used for different objects, which change simultaneously with different input
+
+## Exercise II
+
+1. Build the server logic for your app. Reconsider your ideas for the app and try to implement them in `server.R`
+
+2. Create a reactive variable to add flexibility to your app
+
+3. Find a solution to deactivate or reset all filter options with one additional control widget
+
+4. Replace your plots with `plotly` plots
+
+# Deployment
+
+## Deployment on `shinyapps.io`
+
+- Until now, we only ran our apps locally on our machine
+
+- In order to present your apps to your friends and family, we need to deploy it in the www
+
+- However, we have to take care that our app is protected by a firewall and we have a stable URL.
+
+- For simple apps, we can just use `shinyapps.io`
+
+- They will take care of the homepage maintenance
+
+## Deployment on `shinyapps.io`
+
+Deployment using `shinyapps.io`:
+
+1. Create free account on `shinyapps.io` (use your university email address)
+
+2. Go back to RStudio, press the deploy button in the top right corner
+
+3. Re-enter your credentials, select the correct files and let the magic happen :) 
+
+## Exercise III
+
+1. Create an account on `shinyapps.io`
+
+2. Try to deploy your app using the deploy button
+
+3. Share your URL with friends and family - You're a web developer now!
+
+## Deployment using Shiny Server
+
+- For certain apps you might not want to deploy on `shinyapps.io` because
+
+    - their size would require you to use a costly plan
+    
+    - you want full control over the app and host it by yourself
+    
+    - you love playing around with Unix code...
+
+- A free alternative is Shiny Server, allowing you to host your own app
+
+- However, you need an own server to host the app (e.g. Digital Ocean, Amazon Web Services, ...) $\rightarrow$ Still costly...
+
+- Or use the web services provided by the universities of Baden-Wurttemberg: **bwCloud** $\rightarrow$ completely for free (for members of the U of Mannheim)!!!
+
+## Deployment using Shiny Server
+
+When deploying by yourself with Shiny Server, your life will be a bit more complicated:
+
+1. [Register](https://www.bw-cloud.org/de/erste_schritte) for the bwCloud
+
+2. Log into the bwCloud Dashboard
+
+3. Create an SSH-key pair to connect to your server (find a short intro [here](https://www.bw-cloud.org/de/bwcloud_scope/nutzen))
+
+4. Install [PuTTY](https://www.putty.org/) (Windows) or start a remote connection in the Shell (MAC) as well as [Filezilla](https://filezilla-project.org/)
+
+5. Set up the SSH-client to access remote connections
+
+6. Build up a virtual machine (the server) using your bwCloud dashboard and connect to your VM using SSH with PuTTY
+
+- We have not even downloaded Shiny Server ;) 
+
+## Deployment using Shiny Server
+
+When having set up the server, we need to enter our Unix system and install R, all relevant packages and Shiny Server using beautiful Unix code
+
+1. Install R on your machine
+
+```{R, eval = F, echo=T}
+sudo apt-get install r-base
+```
+
+- If you are lucky, the correct version is being installed... most probably you are unlucky, then see [here](https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-18-04) for Ubuntu
+    
+2. Install dependencies to install R packages...
+
+```{R, eval = F, echo=T}
+sudo apt-get -y install libcurl4-gnutls-dev libxml2-dev libssl-dev
+```
+
+3. Install R packages within R, including `shiny` (easy!)
+
+4. Install Shiny Server (check for latest version!)
+
+```{R, eval = F, echo=T}
+wget https://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.5.6.875-amd64.deb
+sudo gdebi shiny-server-1.5.6.875-amd64.deb
+```
+
+## Deployment using Shiny Server
+
+5. Test whether Shiny Server runs correctly: `http://134.155.108.111:3838/` (replace with your IP-address)
+
+6. Use Filezilla to access your server and upload your app files to the `/srv/shiny-server/` folder. It should run when typing in the correct URL associated with your app, for example `http://134.155.108.111:3838/SupForDemocracy/Democratic_Deconsolidation/`
+
+7. Most probably it won't work immediately and you need to troubleshoot... Enjoy! :) 
+
+# Thank you!
