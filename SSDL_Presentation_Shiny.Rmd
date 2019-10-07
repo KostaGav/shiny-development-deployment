@@ -35,6 +35,8 @@ include_graphics(img1_path)
 
 - Shiny Apps interact with R 
     - Allows for calculations, display of R objects, presentation of results ... 
+    
+- Examples: [Democracy](bit.ly/Democratic-Deconsolidation) and [MeTwo](https://metwo.correlaid.org/)
 
 ## Shiny App Components
 
@@ -139,6 +141,7 @@ server <- function(input, output){}
 
 - Launch the Shiny App by pressing the 'Run App' button in the top right corner
 
+# Building the plain UI
 
 ## Building the plain UI
 
@@ -258,3 +261,60 @@ sliderInput(
   pre = "€"
 )
 ```
+
+
+## Preparing the output
+
+- We need elements to specify where the outputs should be displayed
+
+- These outputs might be plots, tables, text, images, maps, or ...
+
+- In the UI, we only build the placeholder, which will be filled using the server logic
+
+- every output function has an `outputId` argument to identify the output created in `server.R`
+
+- Plot output:
+
+```{r}
+plotOutput("greatPlot")
+```
+
+- Table output:
+
+```{r}
+tableOutput("superbTable")
+```
+
+- output element should always be added to the `mainPanel()`
+
+
+## Exercise I - Building your own UI
+
+- Using the `mtcars` data set, we will now start creating our own Shiny Apps
+
+1. Make yourself familiar with the data set, if you don't know it yet.
+
+```{r, eval = F, echo=T}
+library(tidyverse)
+glimpse(mtcars)
+?mtcars
+```
+
+2. We want to create a classic data presentation app. Think of an appropriate UI for the data presentation. If you like, you can draw a sketch.
+
+3. Think of useful control widgets to control the presentation of the data.
+
+4. Create the two files needed for Shiny Apps, add the relevant code to initiate the app and set up an UI with a sidebar.
+
+5. Add the control widgets and specify the conditions, you want the users to manipulate
+
+6. Add a placeholder for the output you want to create
+
+7. Run the app regularly to see how you proceed
+
+
+# Implementing the server logic
+
+## Implementing the server logic
+
+XXX
