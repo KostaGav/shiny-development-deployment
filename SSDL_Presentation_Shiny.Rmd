@@ -466,7 +466,9 @@ output$greatPlot <- renderPlotly({
 
 3. Find a solution to deactivate or reset all filter options with one additional control widget
 
-4. Replace your plots with `plotly` plots
+4. Add a second plot to your app with different functionalities
+
+5. Replace your plots with `plotly` plots
 
 # Deployment
 
@@ -549,7 +551,8 @@ sudo apt-get install r-base
 2. Install dependencies to install R packages...
 
 ```{R, eval = F, echo=T}
-sudo apt-get -y install libcurl4-gnutls-dev libxml2-dev libssl-dev
+sudo apt-get -y install libcurl4-gnutls-dev 
+sudo apt-get -y install libxml2-dev libssl-dev
 ```
 
 3. Install R packages within R, including `shiny` (easy!)
