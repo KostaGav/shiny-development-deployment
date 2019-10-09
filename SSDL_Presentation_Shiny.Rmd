@@ -36,7 +36,7 @@ include_graphics(img1_path)
 - Shiny Apps interact with R 
     - Allows for calculations, display of R objects, presentation of results ... 
     
-- Examples: [Democracy](bit.ly/Democratic-Deconsolidation) and [MeTwo](https://metwo.correlaid.org/)
+- Examples: [Democracy](http://134.155.108.111:3838/SupForDemocracy/Democratic_Deconsolidation/) and [MeTwo](https://metwo.correlaid.org/)
 
 ## Shiny App Components
 
@@ -408,13 +408,10 @@ output$greatPlot <- renderPlot({
 
 - One way of increasing the user experience with your app are [`plotly`](https://plot.ly/) plots
 
-- Using `ggplot` it is extremely easy to implement them:
-
 ```{r, eval = F, echo=T}
 library(plotly)
 # ui.R
-## Replace plotOutput() with plotlyOutput(), since we refer to a different type of object
-
+## Replace plotOutput() with plotlyOutput()
 # server.R
   output$greatPlot <- renderPlotly({
     
