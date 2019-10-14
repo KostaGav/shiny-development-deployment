@@ -227,8 +227,8 @@ include_graphics(img2_path)
 ```{r, eval = F, echo=T}
 radioButtons(
   "buttons",
-  "Choose a mode of transmission",
-  choices = c("automatic" = 0, "manual" = 1),
+  "Did the passenger survive?",
+  choices = c("did not survive" = 0, "survive" = 1),
   selected = 0
 )
 ```
@@ -241,8 +241,8 @@ radioButtons(
 ```{r, eval = F, echo=T}
 selectInput(
   "selector",
-  "Select the number of cylinders",
-  choices = c(4, 6, 8)
+  "Select the class of the passenger",
+  choices = c(1, 2, 3)
 )
 ```
 
@@ -254,11 +254,11 @@ selectInput(
 ```{r, eval = F, echo=T}
 sliderInput(
   "slider",
-  "Pick a range of gross horsepower",
+  "Pick a range of fare (in $)",
   min = 0,
-  max = 400,
-  value = c(10,300),
-  pre = "hp"
+  max = 550,
+  value = c(10,50),
+  pre = "$"
 )
 ```
 
@@ -286,14 +286,14 @@ plotOutput("greatPlot")
 
 ## Exercise I - Building your own UI
 
-- Using the `mtcars` data set, we will now start creating our own Shiny Apps
+- Using the `titanic` data set, we will now start creating our own Shiny Apps
 
 1. Make yourself familiar with the data set, if you don't know it yet.
 
 ```{r, eval = F, echo=T}
 library(tidyverse)
-glimpse(mtcars)
-?mtcars
+library(titanic)
+glimpse(titanic_train)
 ```
 
 2. We want to create a classic data presentation app. Think of an appropriate UI for the data presentation. If you like, you can draw a sketch.
@@ -373,7 +373,7 @@ output$greatPlot <- renderPlot({
 library(ggplot2)
 
 output$greatPlot <- renderPlot({
-  ggplot(mtcars, aes(mpg)) + 
+  ggplot(titanic_train, aes(Age)) + 
     geom_histogram()
 })
 
@@ -390,13 +390,13 @@ library(ggplot2)
 output$greatPlot <- renderPlot({
   
   filteredData <- 
-    mtcars %>% 
-    filter(hp >= input$slider[1],
-           hp <= input$slider[2],
-           cyl == input$selector,
-           am == input$buttons)
+    titanic_train %>% 
+    filter(Fare >= input$slider[1],
+           Fare <= input$slider[2],
+           Pclass == input$selector,
+           Survived == input$buttons)
   
-  ggplot(filteredData, aes(mpg)) + 
+  ggplot(filteredData, aes(Age)) + 
     geom_histogram()
 })
 
@@ -415,15 +415,15 @@ library(plotly)
 # server.R
   output$greatPlot <- renderPlotly({
     
-    filteredData <- 
-      mtcars %>% 
-      filter(hp >= input$slider[1],
-             hp <= input$slider[2],
-             cyl == input$selector,
-             am == input$buttons)
-    
-    plotHist <- ggplot(filteredData, aes(mpg)) + 
-      geom_histogram()
+  filteredData <- 
+    titanic_train %>% 
+    filter(Fare >= input$slider[1],
+           Fare <= input$slider[2],
+           Pclass == input$selector,
+           Survived == input$buttons)
+  
+  plotHist <- ggplot(filteredData, aes(Age)) + 
+    geom_histogram()
     
     ggplotly(plotHist)
   })
@@ -438,15 +438,15 @@ library(plotly)
 library(ggplot2)
 
   filtered <- reactive({
-    mtcars %>% 
-      filter(hp >= input$slider[1],
-             hp <= input$slider[2],
-             cyl == input$selector,
-             am == input$buttons)
+    titanic_train %>% 
+    filter(Fare >= input$slider[1],
+           Fare <= input$slider[2],
+           Pclass == input$selector,
+           Survived == input$buttons)
   })
 
 output$greatPlot <- renderPlotly({
-  plotHist <- ggplot(filtered(), aes(mpg)) + 
+  plotHist <- ggplot(filtered(), aes(Age)) + 
     geom_histogram()
   ggplotly(plotHist)
 })
@@ -463,7 +463,7 @@ output$greatPlot <- renderPlotly({
 
 3. Find a solution to deactivate or reset all filter options with one additional control widget
 
-4. Add a second plot to your app with different functionalities
+4. Add a second output to your app with different functionalities. How about the number of survivals?
 
 5. Replace your plots with `plotly` plots
 

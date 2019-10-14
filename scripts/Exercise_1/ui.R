@@ -1,29 +1,30 @@
 library(shiny)
 library(ggplot2)
 library(plotly)
+library(titanic)
 #The most simple structure of the UI:
 ui <- fluidPage(
-  titlePanel("Visualizing the mtcars data set"),
+  titlePanel("Visualizing the Titanic data set"),
   sidebarLayout(
     sidebarPanel(
       radioButtons(
         "buttons",
-        "Choose a mode of transmission",
-        choices = c("automatic" = 0, "manual" = 1),
+        "Did the passenger survive?",
+        choices = c("did not survive" = 0, "survive" = 1),
         selected = 0
       ),
       selectInput(
         "selector",
-        "Select the number of cylinders",
-        choices = c(4, 6, 8)
+        "Select the class of the passenger",
+        choices = c(1, 2, 3)
       ),
       sliderInput(
         "slider",
-        "Pick a range of gross horsepower",
+        "Pick a range of fare (in $)",
         min = 0,
-        max = 400,
-        value = c(10,300),
-        pre = "hp"
+        max = 550,
+        value = c(10,50),
+        pre = "$"
       )
     ),
     mainPanel(
