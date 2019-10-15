@@ -10,7 +10,7 @@ ui <- fluidPage(
       radioButtons(
         "buttons",
         "Did the passenger survive?",
-        choices = c("did not survive" = 0, "survive" = 1),
+        choices = c("did not survive" = 0, "did survive" = 1),
         selected = 0
       ),
       selectInput(
