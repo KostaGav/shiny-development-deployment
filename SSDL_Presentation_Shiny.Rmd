@@ -19,6 +19,7 @@ fontsize: 10pt
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 img1_path <- "shiny.png"
 img2_path <- "shiny-inputs.png"
+img3_path <- "linux.jpg"
 
 library(knitr) 
 ```
@@ -69,7 +70,7 @@ Shiny Apps can be set up in two different ways:
 
 - name of the file has to be `app.R`!!!
 
-2. Two file App
+2. Two files App
 
 - `ui` and `server` are stored in separate scripts
 
@@ -79,7 +80,9 @@ Shiny Apps can be set up in two different ways:
 
 - names of the files have to be `ui.R` and `server.R`!!!
 
-$\rightarrow$ We are going to develop Shiny Apps using the Two File method
+$\rightarrow$ The files always have to go in a separate folder!
+
+$\rightarrow$ We are going to develop Shiny Apps using the Two Files method
 
 # Developing Shiny Apps - Step by Step
 
@@ -99,7 +102,7 @@ Development:
 
 4. Implementing the server logic
 
-5. Output/Input Reaction
+5. Input/Output Reaction
 
 6. Rendering objects
 
@@ -109,16 +112,15 @@ Deployment:
 
 1. Deploy your app using `shinyapps.io`
 
-2. Deploy on your own VM using `Shiny Server`
+2. Deploy on your own VM using `Shiny Server` (only conceptually)
 
 
 ## Building a Shiny App from scratch
 
 ```{r, eval=FALSE, echo = TRUE}
-install.packages("shiny")
-library(shiny)
+source("scripts/install_packages.R")
 runExample("01_hello")
-#To show alternative Apps, please type runExample(NA) 
+#To show other Apps, please type runExample(NA) 
 #and choose another example
 ```
 
@@ -139,7 +141,7 @@ ui <- fluidPage()
 server <- function(input, output){}
 ```
 
-- Launch the Shiny App by pressing the 'Run App' button in the top right corner
+- Launch the Shiny App by pressing the 'Run App' button in the top right corner of the Source pane
 
 # Building the plain UI
 
@@ -149,10 +151,10 @@ server <- function(input, output){}
 
 - Thus, we build the UI first
 
-- In simple Shiny App, the whole UI fits in the `fluidpage`
+- In simple Shiny Apps, the whole UI fits in the `fluidpage`
 
     - every new object is passed comma-separated 
-    - text can be passsed to the UI by entering strings 
+    - text can be passed to the UI by simply entering strings 
 
 - In order to format text, Shiny uses HTML wrappers:
 
@@ -163,21 +165,17 @@ server <- function(input, output){}
     - `em()`: make text italicized
     - `br()`: add line break
     
-
-    
 - We can add an official header using `titlePanel()`
-
-Q: Can you see any particular differences between using `h1()` and the `titlePanel()` when using them as title?
 
 
 ## Building the plain UI
 
 - Until now, we only have a plain white page
 
-- We need a proper layout to make it appear nicer:
+- We need a proper layout to make it nicer:
 
     - `sidebarlayout` is the simplest layout format
-    - Input and control widgets on the left side, results and plots on the right hand side
+    - Input and control widgets on the left hand side, results and plots on the right hand side
     
 ```{r, eval = F, echo=T}
 ui <- fluidPage(
@@ -189,16 +187,19 @@ ui <- fluidPage(
 )
 ```
 
+Q: What are the differences between `h1()` and `titlePanel()` when using them as title?
+
+
 ## Adding Input and Control Widgets
 
 - In order to interact with Shiny Apps, we need control widgets
 
-- User can specify inputs, enter text or select specific dates to create a certain results
+- User can specify inputs, enter text or select specific dates to create results
 
-- all input function have two arguments: `inputId` and `label`
+- All input functions have two arguments: `inputId` and `label`
 
     - `inputId`: name Shiny uses to refer to this input, when retrieving values for the back end
-    - has to be unique! (WARNING: if you provide two Ids with the same name, there won't be an error message!)
+    - has to be unique! (WARNING: if you have two Ids with the same name, there won't be an error message!)
     - `label`: Text displaying the label of the control widget
     
 ## Adding Input and Control Widgets
@@ -209,9 +210,9 @@ include_graphics(img2_path)
 
 ## Adding Input and Control Widgets
 
-- control widgets go in the `sidebarPanel`
+- Control widgets go in the `sidebarPanel`
 
-- always choose control widgets depending on the design of your app!
+- Always choose control widgets depending on the design of your app!
 
 - Most common:
 
@@ -228,7 +229,7 @@ include_graphics(img2_path)
 radioButtons(
   "buttons",
   "Did the passenger survive?",
-  choices = c("did not survive" = 0, "survive" = 1),
+  choices = c("did not survive" = 0, "did survive" = 1),
   selected = 0
 )
 ```
@@ -271,7 +272,7 @@ sliderInput(
 
 - In the UI, we only build the placeholder, which will be filled using the server logic
 
-- every output function has an `outputId` argument to identify the output created in `server.R`
+- Every output function has an `outputId` argument to identify the output created in `server.R`
 
 - Plot output:
 
@@ -279,20 +280,18 @@ sliderInput(
 plotOutput("greatPlot")
 ```
 
-- other output forms: `tableOutput()`, `textOutput()`, etc.
+- Other output forms: `tableOutput()`, `textOutput()`, etc.
 
-- output elements should always be added to the `mainPanel()`
+- Output elements should always be added to the `mainPanel()`
 
 
 ## Exercise I - Building your own UI
 
-- Using the `titanic` data set, we will now start creating our own Shiny Apps
+- Using the `titanic_train` data set, we will now start creating our own Shiny Apps
 
 1. Make yourself familiar with the data set, if you don't know it yet.
 
 ```{r, eval = F, echo=T}
-library(tidyverse)
-library(titanic)
 glimpse(titanic_train)
 ```
 
@@ -361,9 +360,9 @@ output$greatPlot <- renderPlot({
 
 - The logic behind the `input` list is the same as for the `output` list
 
-    - based to the Ids provided in the UI, we access the respective object (control widget)
+    - Based to the Ids provided in the UI, we access the respective object (control widget)
     
-    - given the structure of the input, we specify it to fit the output object
+    - Given the structure of the input, we specify it to fit the output object
 
 ## Rendering Plots
 
@@ -404,6 +403,30 @@ output$greatPlot <- renderPlot({
 
 - Now the plot is interactive, but the whole code will get re-executed every time the user re-specifies anything $\rightarrow$ Can become very memory intensive and repetitive when building several plots!
 
+## Reactivity
+
+- We can use reactive variables to extract the filtering from the rendering functions
+
+```{r, eval = F, echo=T}
+library(ggplot2)
+
+  filtered <- reactive({
+    titanic_train %>% 
+    filter(Fare >= input$slider[1],
+           Fare <= input$slider[2],
+           Pclass == input$selector,
+           Survived == input$buttons)
+  })
+
+output$greatPlot <- renderPlotly({
+  ggplot(filtered(), aes(Age)) + 
+    geom_histogram()
+})
+
+```
+
+- Reactive objects can now be used for different objects, which change simultaneously with different input
+
 ## Rendering Plots - Make it more Interactive!
 
 - One way of increasing the user experience with your app are [`plotly`](https://plot.ly/) plots
@@ -430,31 +453,6 @@ library(plotly)
 ```
 
 
-## Reactivity
-
-- We can use reactive variables to extract the filtering from the rendering functions
-
-```{r, eval = F, echo=T}
-library(ggplot2)
-
-  filtered <- reactive({
-    titanic_train %>% 
-    filter(Fare >= input$slider[1],
-           Fare <= input$slider[2],
-           Pclass == input$selector,
-           Survived == input$buttons)
-  })
-
-output$greatPlot <- renderPlotly({
-  plotHist <- ggplot(filtered(), aes(Age)) + 
-    geom_histogram()
-  ggplotly(plotHist)
-})
-
-```
-
-- Reactive objects can now be used for different objects, which change simultaneously with different input
-
 ## Exercise II
 
 1. Build the server logic for your app. Reconsider your ideas for the app and try to implement them in `server.R`
@@ -479,21 +477,21 @@ output$greatPlot <- renderPlotly({
 
 - For simple apps, we can just use `shinyapps.io`
 
-- They will take care of the homepage maintenance
+- The ShinyApps team will take care of the homepage maintenance
 
 ## Deployment on `shinyapps.io`
 
 Deployment using `shinyapps.io`:
 
-1. Create free account on `shinyapps.io` (use your university email address)
+1. Create free account on [shinyapps.io](shinyapps.io) (use your university email address)
 
-2. Go back to RStudio, press the deploy button in the top right corner
+2. Go back to RStudio, press the deploy button in the top right corner of the Source pane
 
 3. Re-enter your credentials, select the correct files and let the magic happen :) 
 
 ## Exercise III
 
-1. Create an account on `shinyapps.io`
+1. Create an account on [shinyapps.io](shinyapps.io)
 
 2. Try to deploy your app using the deploy button
 
@@ -503,7 +501,7 @@ Deployment using `shinyapps.io`:
 
 - For certain apps you might not want to deploy on `shinyapps.io` because
 
-    - their size would require you to use a costly plan
+    - their size would require you to use a (very) costly plan
     
     - you want full control over the app and host it by yourself
     
@@ -513,11 +511,11 @@ Deployment using `shinyapps.io`:
 
 - However, you need an own server to host the app (e.g. Digital Ocean, Amazon Web Services, ...) $\rightarrow$ Still costly...
 
-- Or use the web services provided by the universities of Baden-Wurttemberg: **bwCloud** $\rightarrow$ completely for free (for members of the U of Mannheim)!!!
+- Or use the web services provided by the universities of Baden-Württemberg: **bwCloud** $\rightarrow$ completely for free (for members of the U of Mannheim)!!!
 
 ## Deployment using Shiny Server
 
-When deploying by yourself with Shiny Server, your life will be a bit more complicated:
+When deploying by yourself with Shiny Server, your life will be a *bit* more complicated:
 
 1. [Register](https://www.bw-cloud.org/de/erste_schritte) for the bwCloud
 
@@ -532,6 +530,12 @@ When deploying by yourself with Shiny Server, your life will be a bit more compl
 6. Build up a virtual machine (the server) using your bwCloud dashboard and connect to your VM using SSH with PuTTY
 
 - We have not even downloaded Shiny Server ;) 
+
+## Deployment using Shiny Server
+
+```{r, out.width = "100%", fig.align="center"}
+include_graphics(img3_path)
+```
 
 ## Deployment using Shiny Server
 
@@ -563,10 +567,16 @@ sudo gdebi shiny-server-1.5.6.875-amd64.deb
 
 ## Deployment using Shiny Server
 
-5. Test whether Shiny Server runs correctly: `http://134.155.108.111:3838/` (replace with your IP-address)
+5. Open port 3838 and check whether your firewall is set up
 
-6. Use Filezilla to access your server and upload your app files to the `/srv/shiny-server/` folder. It should run when typing in the correct URL associated with your app, for example `http://134.155.108.111:3838/SupForDemocracy/Democratic_Deconsolidation/`
+```{R, eval = F, echo=T}
+sudo ufw allow 3838
+```
 
-7. Most probably it won't work immediately and you need to troubleshoot... Enjoy! :) 
+6. Test whether Shiny Server runs correctly: `http://134.155.108.111:3838/` (replace with your IP-address)
+
+7. Use Filezilla to access your server and upload your app files to the `/srv/shiny-server/` folder. It should run when typing in the correct URL associated with your app, for example `http://134.155.108.111:3838/SupForDemocracy/Democratic_Deconsolidation/`
+
+8. Most probably it won't work immediately and you need to troubleshoot... Enjoy! :) (see [here](https://www.digitalocean.com/community/tutorials/how-to-set-up-shiny-server-on-ubuntu-16-04) for a tutorial)
 
 # Thank you!

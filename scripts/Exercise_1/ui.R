@@ -1,5 +1,5 @@
 library(shiny)
-library(ggplot2)
+library(tidyverse)
 library(plotly)
 library(titanic)
 #The most simple structure of the UI:
